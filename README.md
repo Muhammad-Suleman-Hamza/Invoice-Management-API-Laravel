@@ -48,6 +48,11 @@ A Laravel-based API for managing contracts, invoices, and payments with multi-te
 	php artisan db:seed --class=TestSeeder
 	```
 
+
+## Postman Collection
+
+[Postman Collection](postman.postman_collection) is in the root directory for testing API endpoints.
+
 ## Usage
 
 - Register and login via `/api/register` and `/api/login` endpoints
