@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Invoice;
 
 use App\DTOs\CreateInvoiceDTO;
 use App\DTOs\RecordPaymentDTO;
@@ -29,7 +29,7 @@ class InvoiceService
 
             $contract = $this->contractRepo->findById($dto->contract_id);
 
-            if ($contract->status !== ContractStatus::Active) {
+            if ($contract->status !== ContractStatus::Active->value) {
                 throw new \DomainException('Contract is not active.');
             }
 
@@ -50,6 +50,11 @@ class InvoiceService
                 'due_date' => $dto->due_date,
             ]);
         });
+    }
+
+    public function getInvoicesByContract(int $contractId)
+    {
+        return $this->invoiceRepo->getByContractId($contractId);
     }
 
     public function recordPayment(RecordPaymentDTO $dto): Payment

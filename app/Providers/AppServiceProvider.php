@@ -12,6 +12,11 @@ use App\Repositories\Invoices\EloquentInvoiceRepository;
 use App\Repositories\Payments\PaymentRepositoryInterface;
 use App\Repositories\Payments\EloquentPaymentRepository;
 
+use App\Services\Tax\TaxService;
+use App\Services\Tax\Calculators\VATCalculator;
+use App\Services\Tax\Interfaces\TaxCalculatorInterface;
+use App\Services\Tax\Calculators\MunicipalFeeCalculator;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -33,6 +38,23 @@ class AppServiceProvider extends ServiceProvider
             PaymentRepositoryInterface::class,
             EloquentPaymentRepository::class
         );
+
+        // Bind individual calculators
+        $this->app->bind(VATCalculator::class);
+        $this->app->bind(MunicipalFeeCalculator::class);
+
+        // Tag them
+        $this->app->tag([
+            VATCalculator::class,
+            MunicipalFeeCalculator::class,
+        ], 'tax.calculators');
+
+        // Bind TaxService with tagged calculators
+        $this->app->bind(TaxService::class, function ($app) {
+            return new TaxService(
+                $app->tagged('tax.calculators')
+            );
+        });
     }
 
     /**
